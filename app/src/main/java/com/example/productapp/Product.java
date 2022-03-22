@@ -1,14 +1,19 @@
 package com.example.productapp;
 
+import android.graphics.Bitmap;
+
 public class Product {
     String prodName;
     float prodPrice;
     String prodDescr;
+    Bitmap prdImage;
 
-    public Product(String prodName, float prodPrice, String prodDescr) {
+
+    public Product(String prodName, float prodPrice, String prodDescr, Bitmap prdImage) {
         this.prodName = prodName;
         this.prodPrice = prodPrice;
         this.prodDescr = prodDescr;
+        this.prdImage = prdImage;
     }
 
     public String getProdName() {
@@ -33,5 +38,13 @@ public class Product {
 
     public void setProdDescr(String prodDescr) {
         this.prodDescr = prodDescr;
+    }
+
+    public Bitmap getPrdImage() {
+        return prdImage;
+    }
+
+    public void setPrdImage(Bitmap prdImage) {
+        this.prdImage = prdImage;
     }
 }
