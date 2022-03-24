@@ -10,9 +10,12 @@ import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -34,11 +37,14 @@ public class MainActivity extends AppCompatActivity {
     public final static int MYREQ_CODE=1001;
     TextInputEditText prodNameEt,prodPriceEt,prodDescriptionEt;
     Button btnSend;
+    ProductDBHelper dbHelper;
+    Coms coms;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        coms=new Coms(this);
 
     }
 
@@ -59,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
                 imageTostore= MediaStore.Images.Media.getBitmap(getContentResolver(),imagePath);
                 prodImage.setImageBitmap(imageTostore);
             } catch (IOException e) {
-                Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                coms.messages("DB issues",e.getMessage());
             }
 
         }
@@ -91,22 +97,21 @@ public class MainActivity extends AppCompatActivity {
     }
     Dialog dialog;
     private void showProductForm() {
+        dbHelper = new ProductDBHelper(this);
         dialog = new Dialog(this);
         AlertDialog.Builder builder=new AlertDialog.Builder(this);
-        //builder.setTitle("Product recording");
-        //builder.setMessage("Record all products as reuired");
-        //builder.setIcon(R.drawable.ic_record);
         View view = LayoutInflater.from(this).inflate(R.layout.productform,null);
         builder.setView(view);
         dialog=builder.create();
         dialog.setContentView(view);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         prodImage=view.findViewById(R.id.prdImage);
         prodNameEt=view.findViewById(R.id.prdName);
         prodPriceEt=view.findViewById(R.id.prdPrice);
+        prodPriceEt.setText("0");
         prodDescriptionEt=view.findViewById(R.id.prdDescription);
         btnSend=view.findViewById(R.id.btnSend);
-
 
         prodImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -124,12 +129,38 @@ public class MainActivity extends AppCompatActivity {
         });
         dialog.show();
     }
-
     private void sendData() {
+        try {
+        String name=prodNameEt.getText().toString();
+        Float price = Float.valueOf(prodPriceEt.getText().toString());
+        String descr = prodDescriptionEt.toString();
+        if (TextUtils.isEmpty(name)){
+            prodNameEt.setError("Product name is required");
+            prodNameEt.requestFocus();
+            return;
+        }
+        if (price<=0){
+            prodPriceEt.setError("Please provide the price");
+            prodPriceEt.requestFocus();
+            return;
+        }
+        if (imagePath==null){
+            coms.messages("Add image","Image cannot null, please selec an image");
+        }
+        dbHelper.insertProduct(new Product(name,price,descr,imageTostore));
+            prodNameEt.setText("");
+            prodPriceEt.setText("0");
+            prodDescriptionEt.setText("");
+            prodImage.setImageResource(R.drawable.ic_baseline_add_a_photo_24);
+        } catch (Exception e) {
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
 
+        }
     }
 
     public void dismissDialog(View view){
+
         dialog.dismiss();
+
     }
 }
