@@ -19,4 +19,13 @@ public class Coms {
         builder.show();
 
     }
+    public void messagesInfo(String title,String mess){
+        AlertDialog.Builder builder= new AlertDialog.Builder(context);
+        builder.setTitle(title);
+        builder.setMessage(mess);
+        builder.setIcon(R.drawable.ic_baseline_info_24);
+        builder.setPositiveButton("OK",null);
+        builder.show();
+
+    }
 }

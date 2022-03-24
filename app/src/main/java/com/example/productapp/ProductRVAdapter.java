@@ -13,10 +13,12 @@ import java.util.List;
 public class ProductRVAdapter extends RecyclerView.Adapter<VH> {
     List<Product> lProducts;
     Context context;
+    Coms coms;
 
     public ProductRVAdapter(List<Product> lProducts, Context context) {
         this.lProducts = lProducts;
         this.context = context;
+        coms=new Coms(context);
     }
 
     @NonNull
@@ -30,8 +32,15 @@ public class ProductRVAdapter extends RecyclerView.Adapter<VH> {
     public void onBindViewHolder(@NonNull VH holder, int position) {
         Product product=lProducts.get(position);
         holder.tvName.setText(product.getProdName());
-        holder.tvDesc.setText(product.getProdDescr());
-        holder.tvPrice.setText((int) product.getProdPrice());
+        holder.tvPrice.setText(""+(int) product.getProdPrice());
+        holder.prodImage.setImageBitmap(product.getPrdImage());
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //show product details in an another activity
+                coms.messagesInfo(""+product.getProdName(),"this product can only cost you "+product.getProdPrice());
+            }
+        });
 
     }
 

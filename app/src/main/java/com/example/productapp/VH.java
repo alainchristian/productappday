@@ -14,7 +14,6 @@ public class VH extends RecyclerView.ViewHolder {
         super(itemView);
         tvName=itemView.findViewById(R.id.tvName);
         tvPrice=itemView.findViewById(R.id.tvPrice);
-        tvDesc=itemView.findViewById(R.id.tvDescription);
         prodImage=itemView.findViewById(R.id.prodImage);
     }
 }
